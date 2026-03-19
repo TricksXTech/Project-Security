@@ -1,0 +1,21 @@
+# Disable directory listing
+Options -Indexes
+
+# Block suspicious query strings
+RewriteEngine On
+
+RewriteCond %{QUERY_STRING} (\.\./|<script|base64_encode|union.*select) [NC]
+RewriteRule .* - [F]
+
+# Block bad bots
+SetEnvIfNoCase User-Agent "curl|wget|python" bad_bot
+Deny from env=bad_bot
+
+# Limit request size
+LimitRequestBody 1048576
+
+# Protect sensitive files
+<FilesMatch "(config|\.env|\.log|\.json)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
